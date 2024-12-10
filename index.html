@@ -3,113 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Калькулятор</title>
+    <title>Поиск текста и проблемы</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f4f4f4;
-        }
-        .calculator {
-            width: 300px;
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-        .display {
-            width: 100%;
-            height: 50px;
-            margin-bottom: 10px;
-            font-size: 24px;
-            text-align: right;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-            background: #f9f9f9;
-        }
-        .buttons {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-        }
-        button {
-            height: 50px;
-            font-size: 18px;
-            border: none;
-            border-radius: 5px;
-            background-color: #007BFF;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .btn-clear {
-            background-color: #dc3545;
-        }
-        .btn-clear:hover {
-            background-color: #a71d2a;
-        }
-        .btn-equals {
-            background-color: #28a745;
-        }
-        .btn-equals:hover {
-            background-color: #1e7d33;
-        }
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        textarea, input[type="text"] { width: 100%; padding: 10px; margin: 10px 0; }
+        button { padding: 10px 20px; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="calculator">
-        <input type="text" id="display" class="display" disabled>
-        <div class="buttons">
-            <button onclick="appendNumber('7')">7</button>
-            <button onclick="appendNumber('8')">8</button>
-            <button onclick="appendNumber('9')">9</button>
-            <button onclick="appendOperator('/')">/</button>
-            <button onclick="appendNumber('4')">4</button>
-            <button onclick="appendNumber('5')">5</button>
-            <button onclick="appendNumber('6')">6</button>
-            <button onclick="appendOperator('*')">*</button>
-            <button onclick="appendNumber('1')">1</button>
-            <button onclick="appendNumber('2')">2</button>
-            <button onclick="appendNumber('3')">3</button>
-            <button onclick="appendOperator('-')">-</button>
-            <button onclick="appendNumber('0')">0</button>
-            <button onclick="appendOperator('.')">.</button>
-            <button class="btn-clear" onclick="clearDisplay()">C</button>
-            <button onclick="appendOperator('+')">+</button>
-            <button class="btn-equals" onclick="calculate()">=</button>
-        </div>
+    <h1>Поиск текста и формирование задачи</h1>
+    <div>
+        <label for="text">Введите текстовый отрывок для поиска:</label>
+        <textarea id="text" rows="5" placeholder="Введите текстовый отрывок..."></textarea>
+        <button id="search-button">Искать</button>
     </div>
-
+    <div id="search-results" style="margin-top: 20px;"></div>
+    <div id="problem-section" style="display: none; margin-top: 20px;">
+        <label for="problem">Введите проблему:</label>
+        <input type="text" id="problem" placeholder="Введите проблему...">
+        <button id="generate-button">Сформировать задачу</button>
+    </div>
+    <div id="output-section" style="display: none; margin-top: 20px;">
+        <h2>Сгенерированная задача</h2>
+        <pre id="output"></pre>
+    </div>
     <script>
-        const display = document.getElementById('display');
-
-        function appendNumber(number) {
-            display.value += number;
-        }
-
-        function appendOperator(operator) {
-            display.value += operator;
-        }
-
-        function clearDisplay() {
-            display.value = '';
-        }
-
-        function calculate() {
-            try {
-                display.value = eval(display.value);
-            } catch {
-                display.value = 'Ошибка';
+        document.getElementById('search-button').addEventListener('click', () => {
+            const text = document.getElementById('text').value;
+            if (!text) {
+                alert('Введите текст для поиска.');
+                return;
             }
-        }
+            // Имитация поиска
+            const mockResults = [
+                "Пример текста 1: " + text,
+                "Пример текста 2: похожий текст",
+                "Пример текста 3: ещё один текст"
+            ];
+            const resultsDiv = document.getElementById('search-results');
+            resultsDiv.innerHTML = '<h2>Результаты поиска:</h2>';
+            mockResults.forEach((result, index) => {
+                const button = document.createElement('button');
+                button.textContent = `Выбрать`;
+                button.style.marginLeft = '10px';
+                button.addEventListener('click', () => {
+                    document.getElementById('problem-section').style.display = 'block';
+                    resultsDiv.innerHTML = `<h3>Выбранный текст:</h3><p>${result}</p>`;
+                    localStorage.setItem('selectedText', result); // Сохраняем выбранный текст
+                });
+                const p = document.createElement('p');
+                p.textContent = result;
+                p.appendChild(button);
+                resultsDiv.appendChild(p);
+            });
+        });
+
+        document.getElementById('generate-button').addEventListener('click', () => {
+            const problem = document.getElementById('problem').value;
+            if (!problem) {
+                alert('Введите проблему.');
+                return;
+            }
+            const selectedText = localStorage.getItem('selectedText');
+            if (!selectedText) {
+                alert('Выберите текст перед вводом проблемы.');
+                return;
+            }
+            const output = `
+Напишите сочинение-рассуждение по проблеме исходного текста: "${problem}"
+
+Сформулируйте позицию автора (рассказчика) по указанной проблеме.
+
+Прокомментируйте, как в тексте раскрывается эта позиция. Включите в комментарий два примера-иллюстрации из прочитанного текста, важные для понимания позиции автора (рассказчика), и поясните их. Укажите и поясните смысловую связь между приведёнными примерами⁠-⁠иллюстрациями.
+
+Сформулируйте и обоснуйте своё отношение к позиции автора (рассказчика) по проблеме исходного текста. Включите в обоснование пример-аргумент, опираясь на читательский, историко-культурный или жизненный опыт.
+
+По тексту: "${selectedText}".
+`;
+            document.getElementById('output').textContent = output;
+            document.getElementById('output-section').style.display = 'block';
+        });
     </script>
 </body>
 </html>
