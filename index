@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск текста и проблемы</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        textarea, input[type="text"] { width: 100%; padding: 10px; margin: 10px 0; }
+        button { padding: 10px 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Поиск текста и формирование задачи</h1>
+    <div>
+        <label for="text">Введите текстовый отрывок для поиска:</label>
+        <textarea id="text" rows="5" placeholder="Введите текстовый отрывок..."></textarea>
+        <button id="search-button">Искать</button>
+    </div>
+    <div id="search-results" style="margin-top: 20px;"></div>
+    <div id="problem-section" style="display: none; margin-top: 20px;">
+        <label for="problem">Введите проблему:</label>
+        <input type="text" id="problem" placeholder="Введите проблему...">
+        <button id="generate-button">Сформировать задачу</button>
+    </div>
+    <div id="output-section" style="display: none; margin-top: 20px;">
+        <h2>Сгенерированная задача</h2>
+        <pre id="output"></pre>
+    </div>
+    <script>
+        document.getElementById('search-button').addEventListener('click', () => {
+            const text = document.getElementById('text').value;
+            if (!text) {
+                alert('Введите текст для поиска.');
+                return;
+            }
+            // Имитация поиска
+            const mockResults = [
+                "Пример текста 1: " + text,
+                "Пример текста 2: похожий текст",
+                "Пример текста 3: ещё один текст"
+            ];
+            const resultsDiv = document.getElementById('search-results');
+            resultsDiv.innerHTML = '<h2>Результаты поиска:</h2>';
+            mockResults.forEach((result, index) => {
+                const button = document.createElement('button');
+                button.textContent = `Выбрать`;
+                button.style.marginLeft = '10px';
+                button.addEventListener('click', () => {
+                    document.getElementById('problem-section').style.display = 'block';
+                    resultsDiv.innerHTML = `<h3>Выбранный текст:</h3><p>${result}</p>`;
+                    localStorage.setItem('selectedText', result); // Сохраняем выбранный текст
+                });
+                const p = document.createElement('p');
+                p.textContent = result;
+                p.appendChild(button);
+                resultsDiv.appendChild(p);
+            });
+        });
+
+        document.getElementById('generate-button').addEventListener('click', () => {
+            const problem = document.getElementById('problem').value;
+            if (!problem) {
+                alert('Введите проблему.');
+                return;
+            }
+            const selectedText = localStorage.getItem('selectedText');
+            if (!selectedText) {
+                alert('Выберите текст перед вводом проблемы.');
+                return;
+            }
+            const output = `
+Напишите сочинение-рассуждение по проблеме исходного текста: "${problem}"
+
+Сформулируйте позицию автора (рассказчика) по указанной проблеме.
+
+Прокомментируйте, как в тексте раскрывается эта позиция. Включите в комментарий два примера-иллюстрации из прочитанного текста, важные для понимания позиции автора (рассказчика), и поясните их. Укажите и поясните смысловую связь между приведёнными примерами⁠-⁠иллюстрациями.
+
+Сформулируйте и обоснуйте своё отношение к позиции автора (рассказчика) по проблеме исходного текста. Включите в обоснование пример-аргумент, опираясь на читательский, историко-культурный или жизненный опыт.
+
+По тексту: "${selectedText}".
+`;
+            document.getElementById('output').textContent = output;
+            document.getElementById('output-section').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
